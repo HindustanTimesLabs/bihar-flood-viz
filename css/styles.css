@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+.subunit.block {
+  fill: #ddd;
+  stroke-width: 0px;
+}
+.subunit.state {
+  fill: none;
+  stroke: #3a403d;
+}
+.subunit-boundary {
+  fill: none;
+  stroke: #3a403d;
+}
+
+.place-label {
+  font-size: .7em;
+  text-shadow: 1px 1px 1px #fcfcfc, 1px 1px 1px #eee, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
