@@ -1,0 +1,17 @@
+{
+  "name": "block-level-map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Harry Stevens <harryjosephstevens@gmail.com> (http://harryjstevens.com/)",
+  "license": "ISC",
+  "dependencies": {
+    "indian-ocean": "^2.0.2",
+    "moment": "^2.18.1",
+    "prompt": "^1.0.0",
+    "underscore": "^1.8.3"
+  }
+}
