@@ -1,3 +1,6 @@
+var day_val = 1,
+  delay = 250;
+
 var width = window.innerWidth, height = 600;
 
 var projection = d3.geoMercator();
@@ -24,15 +27,15 @@ var legend = d3.select(".map-wrapper .legend-cumulative").append("svg")
 var legend_x = d3.scaleLinear()
   .range([0, legend_width]);
 
-var legend_daily_width = 83,
-  legend_daily_height = 35;
+var legend_daily_width = 94,
+  legend_daily_height = 45;
 
 var legend_daily = d3.select(".map-wrapper .legend-daily").append("svg")
     .attr("width", legend_daily_width)
     .attr("height", legend_daily_height);
 
 var circle_scale = d3.scaleLinear()
-  .range([0, 15]);
+  .range([0, 20]);
 
 var color_scheme = "YlGnBu";
 
@@ -44,7 +47,7 @@ d3.queue()
   .await(ready);
 
 function ready(error, bihar_block, state, city, rainfall){
-  
+
   var boundary = centerZoom(bihar_block);
   drawSubUnits(bihar_block, "block");
   drawOuterBoundary(bihar_block, boundary);
@@ -52,8 +55,6 @@ function ready(error, bihar_block, state, city, rainfall){
   drawSubUnits(state, "state");
 
   drawPlaces(city);
-
-  var day_val = 1;
 
   // update rain circle scale domain. max is daily rainfall, variable "rainfall"
   circle_scale.domain([0, d3.max(rainfall, function(d){ return +d.rainfall })]);
@@ -66,23 +67,28 @@ function ready(error, bihar_block, state, city, rainfall){
   
   colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
 
-  var delay = 500;
+  interval();
 
-  d3.interval(function(){
+  function interval(){
+    
     if (day_val == 31){
       day_val = 1;
-    } else{
+    } else {
       ++day_val;
     }
 
-    if (day_val > 10 && day_val < 20){
+    if (day_val > 11 && day_val < 15){
       delay = 1000;
     } else {
-      delay = 500;
+      delay = 100;
     }
 
     redraw();
-  }, delay);
+
+    console.log(delay);
+
+    setTimeout(interval, delay);
+  }
 
   function redraw(){
     $(".legend-wrapper .legend-date .day").html(day_val)
@@ -287,6 +293,15 @@ function drawSubUnits(data, cl){
   svg.selectAll(".subunit." + cl)
       .data(topojson.feature(data, data.objects.polygons).features)
     .enter().append("path")
-      .attr("class", "subunit " + cl)
+      .attr("class", function(d){ return cl == "state" ? "subunit " + cl + " " + toSlugCase(d.properties.ST_NM) : "subunit " + cl; })
       .attr("d", path);
+}
+
+function toSlugCase(x) {
+  return x.toString().toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
 }

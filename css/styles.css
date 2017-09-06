@@ -12,7 +12,6 @@ body {
 
 .map-wrapper .legend-wrapper {
   position: absolute;
-  margin-top: 10px;
   margin-left: 50%;
 }
 .map-wrapper .legend-wrapper .legend-title, .map-wrapper .legend-wrapper .legend-date {
@@ -52,8 +51,6 @@ body {
   font-size: .7em;
 }
 
-
-
 .map-wrapper .map .rain-circle {
   fill: none;
   stroke: #000;
@@ -63,15 +60,22 @@ body {
   stroke-width: 0px;
 }
 .map-wrapper .map .subunit.state {
-  fill: none;
+  fill: #fafafa;
   stroke: #000;
+}
+.map-wrapper .map .subunit.state.bihar {
+  fill: none;
 }
 .map-wrapper .map .subunit-boundary {
   fill: none;
   stroke: #000;
 }
-
-.place-label {
+.map-wrapper .map .place-label {
   font-size: .8em;
   text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.3), 1px -1px 0 rgba(255, 255, 255, 0.3), -1px 1px 0 rgba(255, 255, 255, 0.3), 1px 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.map-source {
+  font-size: .8em;
+  color: #888;
 }
