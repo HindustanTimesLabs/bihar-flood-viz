@@ -1,0 +1,71 @@
+{
+  "type": "Topology",
+  "arcs": [],
+  "objects": {
+    "places": {
+      "type": "GeometryCollection",
+      "geometries": [
+      	{
+      		"type": "Point",
+      		"coordinates": [
+      			87.449685,
+      			26.132118
+      		],
+      		"properties": {
+      			"NAME": "Araria"
+      		}
+      	},
+      	{
+          "type": "Point",
+          "coordinates": [
+            84.519070,
+            26.802092
+          ],
+          "properties": {
+            "NAME": "Bettiah"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            87.47997269587552,
+            25.785414448036306
+          ],
+          "properties": {
+            "NAME": "Purnia"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            84.38000687555052,
+            24.770411803175477
+          ],
+          "properties": {
+            "NAME": "Aurangabad"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            86.9800032134516,
+            25.22999615376318
+          ],
+          "properties": {
+            "NAME": "Bhagalpur"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            85.12809275522181,
+            25.626904984382918
+          ],
+          "properties": {
+            "NAME": "Patna"
+          }
+        }
+      ]
+    }
+  }
+}

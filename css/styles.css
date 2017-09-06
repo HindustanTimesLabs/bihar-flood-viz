@@ -3,9 +3,16 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 
+.map-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .map-wrapper .legend-wrapper {
   position: absolute;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-left: 50%;
 }
 .map-wrapper .legend-wrapper .legend-title, .map-wrapper .legend-wrapper .legend-date {
@@ -31,6 +38,7 @@ body {
 .map-wrapper .legend-daily .legend-dotted-line {
   stroke: #000;
   stroke-dasharray: 2, 2;
+  shape-rendering: crispEdges;
 }
 .map-wrapper .legend-cumulative .legend-rect {
   stroke-width: 1px;
@@ -64,6 +72,6 @@ body {
 }
 
 .place-label {
-  font-size: .7em;
-  text-shadow: 1px 1px 1px #fcfcfc, 1px 1px 1px #eee, 0 -1px 0 #fff, -1px 0 0 #fff;
+  font-size: .8em;
+  text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.3), 1px -1px 0 rgba(255, 255, 255, 0.3), -1px 1px 0 rgba(255, 255, 255, 0.3), 1px 1px 0 rgba(255, 255, 255, 0.3);
 }

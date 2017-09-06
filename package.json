@@ -12,6 +12,7 @@
     "indian-ocean": "^2.0.2",
     "moment": "^2.18.1",
     "prompt": "^1.0.0",
+    "strip-geojson-property": "0.0.1",
     "underscore": "^1.8.3"
   }
 }

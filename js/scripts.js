@@ -1,4 +1,4 @@
-var width = window.innerWidth, height = d3.max([window.innerHeight, 700]);
+var width = window.innerWidth, height = 600;
 
 var projection = d3.geoMercator();
 
@@ -39,10 +39,11 @@ var color_scheme = "YlGnBu";
 d3.queue()
   .defer(d3.json, "data/bihar_block.json")
   .defer(d3.json, "data/states.json")
+  .defer(d3.json, "data/bihar_cities.json")
   .defer(d3.csv, "data/rainfall.csv")
   .await(ready);
 
-function ready(error, bihar_block, state, rainfall){
+function ready(error, bihar_block, state, city, rainfall){
   
   var boundary = centerZoom(bihar_block);
   drawSubUnits(bihar_block, "block");
@@ -50,22 +51,44 @@ function ready(error, bihar_block, state, rainfall){
 
   drawSubUnits(state, "state");
 
+  drawPlaces(city);
+
+  var day_val = 1;
+
   // update rain circle scale domain. max is daily rainfall, variable "rainfall"
   circle_scale.domain([0, d3.max(rainfall, function(d){ return +d.rainfall })]);
   drawLegendDaily(rainfall);
-  drawRain(bihar_block, filterData(rainfall, $("#day").val()));
+  drawRain(bihar_block, filterData(rainfall, day_val));
 
   // var buckets = calculate_buckets(rainfall, "e", 7, "cumulative_rainfall");
   var buckets = [0, 150, 300, 450, 600, 750, d3.max(rainfall, function(d){ return +d.cumulative_rainfall; })]
   drawLegend(buckets, color_scheme);
   
-  colorSubUnits("block", filterData(rainfall, $("#day").val()), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
+  colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
 
-  $("#day").change(function(){
-    $(".legend-wrapper .legend-date .day").html($(this).val())
-    colorSubUnits("block", filterData(rainfall, $("#day").val()), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
-    drawRain(bihar_block, filterData(rainfall, $("#day").val()));
-  });
+  var delay = 500;
+
+  d3.interval(function(){
+    if (day_val == 31){
+      day_val = 1;
+    } else{
+      ++day_val;
+    }
+
+    if (day_val > 10 && day_val < 20){
+      delay = 1000;
+    } else {
+      delay = 500;
+    }
+
+    redraw();
+  }, delay);
+
+  function redraw(){
+    $(".legend-wrapper .legend-date .day").html(day_val)
+    colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
+    drawRain(bihar_block, filterData(rainfall, day_val));
+  }
 
 }
 
@@ -175,7 +198,7 @@ function drawRain(map, data){
       return row.bl_cen_cd == d.properties.bl_cen_cd;
     })[0];
 
-    if (d.properties.block == "Araria") console.log(lookup.rainfall);
+    // if (d.properties.block == "Araria") console.log(lookup.rainfall);
     
     return circle_scale(lookup.rainfall); 
   }
@@ -254,10 +277,10 @@ function drawPlaces(data){
     .enter().append("text")
       .attr("class", "place-label")
       .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
-      .attr("dy", ".35em")
-      .attr("x", function(d) { return projection(d.geometry.coordinates)[0] <= width / 2 ? -6 : 6; })
-      .style("text-anchor", function(d){ return projection(d.geometry.coordinates)[0] <= width / 2 ? "end" : "start"; })
-      .text(function(d) { return d.properties.name; });
+      .attr("dy", -6)
+      .attr("x", 0)
+      .style("text-anchor", "middle")
+      .text(function(d) { return d.properties.NAME; });
 }
 
 function drawSubUnits(data, cl){
