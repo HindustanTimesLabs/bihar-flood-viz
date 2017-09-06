@@ -79,15 +79,15 @@ function ready(error, bihar_block, state, city, rainfall){
 
     if (day_val > 11 && day_val < 15){
       delay = 1000;
+      $(".legend-date").addClass("red-text");
     } else {
       delay = 100;
+      $(".legend-date").removeClass("red-text");
     }
 
     redraw();
 
-    console.log(delay);
-
-    setTimeout(interval, delay);
+    d3.timeout(interval, delay);
   }
 
   function redraw(){
