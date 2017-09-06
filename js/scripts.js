@@ -22,7 +22,7 @@ var legend = d3.select(".map-wrapper .legend-cumulative").append("svg")
     .attr("width", legend_width + legend_margin.left + legend_margin.right)
     .attr("height", legend_height)
   .append("g")
-    .attr("transform", "translate(" + legend_margin.left + ", 0)")
+    .attr("transform", "translate(" + legend_margin.left + ", 0)");
 
 var legend_x = d3.scaleLinear()
   .range([0, legend_width]);
@@ -44,9 +44,10 @@ d3.queue()
   .defer(d3.json, "data/states.json")
   .defer(d3.json, "data/bihar_cities.json")
   .defer(d3.csv, "data/rainfall.csv")
+  .defer(d3.json, "data/states_labels.json")
   .await(ready);
 
-function ready(error, bihar_block, state, city, rainfall){
+function ready(error, bihar_block, state, city, rainfall, state_labels){
 
   var boundary = centerZoom(bihar_block);
   drawSubUnits(bihar_block, "block");
@@ -54,7 +55,8 @@ function ready(error, bihar_block, state, city, rainfall){
 
   drawSubUnits(state, "state");
 
-  drawPlaces(city);
+  drawPlaces(city, "city");
+  drawPlaces(state_labels, "state-label");
 
   // update rain circle scale domain. max is daily rainfall, variable "rainfall"
   circle_scale.domain([0, d3.max(rainfall, function(d){ return +d.rainfall })]);
@@ -272,16 +274,19 @@ function drawOuterBoundary(data, boundary){
       .attr("class", "subunit-boundary");
 }
 
-function drawPlaces(data){
+function drawPlaces(data, cl){
+
+  if (cl == "state-label") path.pointRadius(0);
+
   svg.append("path")
       .datum(topojson.feature(data, data.objects.places))
       .attr("d", path)
       .attr("class", "place");
 
-  svg.selectAll(".place-label")
+  svg.selectAll(".place-label ." + cl)
       .data(topojson.feature(data, data.objects.places).features)
     .enter().append("text")
-      .attr("class", "place-label")
+      .attr("class", "place-label " + cl)
       .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
       .attr("dy", -6)
       .attr("x", 0)

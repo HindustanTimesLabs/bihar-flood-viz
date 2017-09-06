@@ -74,6 +74,12 @@ body {
   font-size: .8em;
   text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.3), 1px -1px 0 rgba(255, 255, 255, 0.3), -1px 1px 0 rgba(255, 255, 255, 0.3), 1px 1px 0 rgba(255, 255, 255, 0.3);
 }
+.map-wrapper .map .place-label.state-label {
+  font-style: italic;
+  fill: grey;
+  text-transform: uppercase;
+  font-size: .7em;
+}
 
 .map-source {
   font-size: .8em;

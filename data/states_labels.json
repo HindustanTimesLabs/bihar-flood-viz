@@ -1,0 +1,71 @@
+{
+  "type": "Topology",
+  "arcs": [],
+  "objects": {
+    "places": {
+      "type": "GeometryCollection",
+      "geometries": [
+      	{
+      		"type": "Point",
+      		"coordinates": [
+      			88.270076,
+            25.343333
+      		],
+      		"properties": {
+      			"NAME": "Bengal"
+      		}
+      	},
+        {
+          "type": "Point",
+          "coordinates": [
+            82.854155,
+            26.025292
+          ],
+          "properties": {
+            "NAME": "Uttar Pradesh"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            89.561650,
+            24.799122 
+          ],
+          "properties": {
+            "NAME": "Bangladesh"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            85.299829,
+            27.118753
+          ],
+          "properties": {
+            "NAME": "Nepal"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            88.401158,
+            27.297171
+          ],
+          "properties": {
+            "NAME": "Sikkim"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            85.905007,
+            24.420888
+          ],
+          "properties": {
+            "NAME": "Jharkhand"
+          }
+        }
+      ]
+    }
+  }
+}
