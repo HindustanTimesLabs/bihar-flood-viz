@@ -1,4 +1,4 @@
-var width = window.innerWidth, height = window.innerHeight;
+var width = window.innerWidth, height = d3.max([window.innerHeight, 700]);
 
 var projection = d3.geoMercator();
 
@@ -15,15 +15,24 @@ var legend_height = 22,
   legend_margin = {left: 5, right: 5};
   legend_width = (width * .23) - legend_margin.left - legend_margin.right;  
 
-var legend = d3.select(".map-wrapper .legend").append("svg")
+var legend = d3.select(".map-wrapper .legend-cumulative").append("svg")
     .attr("width", legend_width + legend_margin.left + legend_margin.right)
     .attr("height", legend_height)
   .append("g")
     .attr("transform", "translate(" + legend_margin.left + ", 0)")
 
-
 var legend_x = d3.scaleLinear()
   .range([0, legend_width]);
+
+var legend_daily_width = 83,
+  legend_daily_height = 35;
+
+var legend_daily = d3.select(".map-wrapper .legend-daily").append("svg")
+    .attr("width", legend_daily_width)
+    .attr("height", legend_daily_height);
+
+var circle_scale = d3.scaleLinear()
+  .range([0, 15]);
 
 var color_scheme = "YlGnBu";
 
@@ -41,16 +50,55 @@ function ready(error, bihar_block, state, rainfall){
 
   drawSubUnits(state, "state");
 
+  // update rain circle scale domain. max is daily rainfall, variable "rainfall"
+  circle_scale.domain([0, d3.max(rainfall, function(d){ return +d.rainfall })]);
+  drawLegendDaily(rainfall);
+  drawRain(bihar_block, filterData(rainfall, $("#day").val()));
+
   // var buckets = calculate_buckets(rainfall, "e", 7, "cumulative_rainfall");
   var buckets = [0, 150, 300, 450, 600, 750, d3.max(rainfall, function(d){ return +d.cumulative_rainfall; })]
   drawLegend(buckets, color_scheme);
-
+  
   colorSubUnits("block", filterData(rainfall, $("#day").val()), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
 
   $("#day").change(function(){
     $(".legend-wrapper .legend-date .day").html($(this).val())
     colorSubUnits("block", filterData(rainfall, $("#day").val()), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
+    drawRain(bihar_block, filterData(rainfall, $("#day").val()));
   });
+
+}
+
+function drawLegendDaily(data){
+
+  var m = d3.max(data, function(d){ return +d.rainfall });
+
+  var legend_data = [100, m];
+
+  var legend_circle = legend_daily.selectAll(".legend-circle")
+      .data(legend_data)
+    .enter().append("circle")
+      .attr("class", "legend-circle")
+      .attr("cy", function(d){ return circle_scale(d) + 1; })
+      .attr("cx", circle_scale(m) + 1)
+      .attr("r", function(d){ return circle_scale(d); });
+
+  var legend_dotted_line = legend_daily.selectAll(".legend-dotted-line")
+      .data(legend_data)
+    .enter().append("line")
+      .attr("class", "legend-dotted-line")
+      .attr("x1", circle_scale(m) + 1)
+      .attr("x2", circle_scale(m) * 2 + 10)
+      .attr("y1", function(d){ return circle_scale(d * 2) + 1; })
+      .attr("y2", function(d){ return circle_scale(d * 2) + 1; });
+
+  var legend_daily_number = legend_daily.selectAll(".legend-daily-number")
+      .data(legend_data)
+    .enter().append("text")
+      .attr("class", "legend-daily-number legend-number")
+      .attr("x", circle_scale(m) * 2 + 10)
+      .attr("y", function(d){ return circle_scale(d * 2) + 2; })
+      .text(function(d, i){ return d + (i == 1 ? " mm" : ""); });
 
 }
 
@@ -77,45 +125,19 @@ function drawLegend(buckets, colorScheme){
 
   // JOIN
   var legendRect = legend.selectAll(".legend-rect")
-    .data(buckets, function(d){ return d.bucket; });
-
-  var legendNumber = legend.selectAll(".legend-number")
-    .data(buckets, function(d){ return d.bucket; });
-
-  // EXIT
-  legendRect.exit()
-    .transition()
-      .attr("opacity", 1e-6)
-      .remove();
-
-  legendNumber.exit()
-    .transition()
-      .attr("opacity", 1e-6)
-      .remove();
-
-  // UPDATE
-  legendRect
-    .transition()
-      .attr("width", function(d){ return legend_x(d.x + d.width); })
-      .attr("x", function(d){ return legend_x(d.x); })
-      .attr("fill", function(d){ return d.color });
-  
-  legendNumber
-    .transition()
-      .attr("x", function(d){ return legend_x(d.x); })
-      .text(function(d){ return d.x; });
-
-  // ENTER
-  legendRect.enter().append("rect")
+      .data(buckets, function(d){ return d.bucket; })
+    .enter().append("rect")
       .attr("class", "legend-rect")
       .attr("y", 0)
       .attr("height", legend_bar_height)
       .attr("x", function(d){ return legend_x(d.x); })
       .attr("fill", function(d){ return d.color })
       .attr("width", function(d){ return legend_x(d.x + d.width); });
-
-  legendNumber.enter().append("text")
-      .attr("class", "legend-number")
+  
+  var legendNumber = legend.selectAll(".legend-cumulative-number")
+      .data(buckets, function(d){ return d.bucket; })
+    .enter().append("text")
+      .attr("class", "legend-cumulative-number legend-number")
       .attr("y", legend_height)
       .attr("x", function(d){ return legend_x(d.x); })
       .style("text-anchor", "middle")
@@ -126,6 +148,38 @@ function drawLegend(buckets, colorScheme){
 function filterData(data, day){
   var cloned = JSON.parse(JSON.stringify(data))
   return cloned.filter(function(row){ return row.date.split(" ")[0] == day; });
+}
+
+function drawRain(map, data){
+
+  // JOIN
+  var rain_circle = svg.selectAll(".rain-circle")
+      .data(topojson.feature(map, map.objects.polygons).features, function(d){ return d.properties.bl_cen_cd; });
+
+  // EXIT
+
+
+  // UPDATE
+  rain_circle
+      .attr("r", calc_radius);
+
+  // ENTER
+  rain_circle.enter().append("circle")
+      .attr("class", "rain-circle")
+      .attr("cx", function(d){ return path.centroid(d)[0]; })
+      .attr("cy", function(d){ return path.centroid(d)[1]; })
+      .attr("r", calc_radius);
+  
+  function calc_radius(d){
+    var lookup = data.filter(function(row){
+      return row.bl_cen_cd == d.properties.bl_cen_cd;
+    })[0];
+
+    if (d.properties.block == "Araria") console.log(lookup.rainfall);
+    
+    return circle_scale(lookup.rainfall); 
+  }
+
 }
 
 function colorSubUnits(cl, filtered_data, buckets, color_scale, value, match_value) {
