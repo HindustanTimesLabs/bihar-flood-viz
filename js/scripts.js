@@ -80,7 +80,7 @@ function ready(error, bihar_block, state, city, rainfall, state_labels){
     }
 
     if (day_val > 11 && day_val < 15){
-      delay = 1000;
+      delay = 100;
       $(".legend-date").addClass("red-text");
     } else {
       delay = 100;
