@@ -89,3 +89,9 @@ body {
 .red-text {
   color: #df5a49;
 }
+.red-stroke {
+  stroke: #df5a49 !important;
+}
+.red-fill {
+  fill: #df5a49 !important;
+}

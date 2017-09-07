@@ -82,9 +82,13 @@ function ready(error, bihar_block, state, city, rainfall, state_labels){
     if (day_val > 11 && day_val < 15){
       delay = 100;
       $(".legend-date").addClass("red-text");
+      $(".map-wrapper .legend-daily .legend-circle").addClass("red-fill");
+      $(".map-wrapper .map .rain-circle").addClass("red-fill");
     } else {
       delay = 100;
       $(".legend-date").removeClass("red-text");
+      $(".map-wrapper .legend-daily .legend-circle").removeClass("red-fill");
+      $(".map-wrapper .map .rain-circle").removeClass("red-fill");
     }
 
     redraw();
@@ -104,7 +108,7 @@ function drawLegendDaily(data){
 
   var m = d3.max(data, function(d){ return +d.rainfall });
 
-  var legend_data = [100, m];
+  var legend_data = [m, 100];
 
   var legend_circle = legend_daily.selectAll(".legend-circle")
       .data(legend_data)
