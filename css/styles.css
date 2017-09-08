@@ -14,6 +14,9 @@ body {
   position: absolute;
   margin-left: 50%;
 }
+.map-wrapper.district-deaths .legend-wrapper {
+  margin-top: 30px;
+}
 .map-wrapper .legend-wrapper .legend-title, .map-wrapper .legend-wrapper .legend-date {
   text-align: center;
 }
@@ -44,6 +47,7 @@ body {
   stroke: #fff;
   shape-rendering: crispEdges;
 }
+
 .map-wrapper .legend-cumulative {
   margin-bottom: 10px;
 }
@@ -55,9 +59,14 @@ body {
   fill: none;
   stroke: #000;
 }
-.map-wrapper .map .subunit.block, .map-wrapper .map .subunit.district {
+.map-wrapper .map .subunit.block {
   fill: #ddd;
   stroke-width: 0px;
+}
+.map-wrapper .map .subunit.district {
+  fill: #fff;
+  stroke-width: 1px;
+  stroke: #444;
 }
 .map-wrapper .map .subunit.state {
   fill: #fafafa;
