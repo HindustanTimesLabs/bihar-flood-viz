@@ -9,7 +9,7 @@ var path = d3.geoPath()
     .projection(projection)
     .pointRadius(2);
 
-var svg = d3.select(".map-wrapper .map").append("svg")
+var svg = d3.select(".map-wrapper.blocks-rainfall .map").append("svg")
     .attr("width", width)
     .attr("height", height);
 
@@ -18,7 +18,7 @@ var legend_height = 22,
   legend_margin = {left: 5, right: 5};
   legend_width = (width * .23) - legend_margin.left - legend_margin.right;  
 
-var legend = d3.select(".map-wrapper .legend-cumulative").append("svg")
+var legend = d3.select(".map-wrapper.blocks-rainfall .legend-cumulative").append("svg")
     .attr("width", legend_width + legend_margin.left + legend_margin.right)
     .attr("height", legend_height)
   .append("g")
@@ -30,7 +30,7 @@ var legend_x = d3.scaleLinear()
 var legend_daily_width = 94,
   legend_daily_height = 45;
 
-var legend_daily = d3.select(".map-wrapper .legend-daily").append("svg")
+var legend_daily = d3.select(".map-wrapper.blocks-rainfall .legend-daily").append("svg")
     .attr("width", legend_daily_width)
     .attr("height", legend_daily_height);
 
@@ -82,13 +82,13 @@ function ready(error, bihar_block, state, city, rainfall, state_labels){
     if (day_val > 11 && day_val < 15){
       delay = 100;
       $(".legend-date").addClass("red-text");
-      $(".map-wrapper .legend-daily .legend-circle").addClass("red-fill");
-      $(".map-wrapper .map .rain-circle").addClass("red-fill");
+      $(".map-wrapper.blocks-rainfall .legend-daily .legend-circle").addClass("red-fill");
+      $(".map-wrapper.blocks-rainfall .map .rain-circle").addClass("red-fill");
     } else {
       delay = 100;
       $(".legend-date").removeClass("red-text");
-      $(".map-wrapper .legend-daily .legend-circle").removeClass("red-fill");
-      $(".map-wrapper .map .rain-circle").removeClass("red-fill");
+      $(".map-wrapper.blocks-rainfall .legend-daily .legend-circle").removeClass("red-fill");
+      $(".map-wrapper.blocks-rainfall .map .rain-circle").removeClass("red-fill");
     }
 
     redraw();
@@ -97,7 +97,7 @@ function ready(error, bihar_block, state, city, rainfall, state_labels){
   }
 
   function redraw(){
-    $(".legend-wrapper .legend-date .day").html(day_val)
+    $(".blocks-rainfall .legend-wrapper .legend-date .day").html(day_val)
     colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
     drawRain(bihar_block, filterData(rainfall, day_val));
   }

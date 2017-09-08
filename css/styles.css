@@ -55,7 +55,7 @@ body {
   fill: none;
   stroke: #000;
 }
-.map-wrapper .map .subunit.block {
+.map-wrapper .map .subunit.block, .map-wrapper .map .subunit.district {
   fill: #ddd;
   stroke-width: 0px;
 }
