@@ -143,7 +143,6 @@ function drawRain(map, data){
   var rain_circle = svg.selectAll(".rain-circle")
       .data(topojson.feature(map, map.objects.polygons).features, function(d){ return d.properties.bl_cen_cd; });
 
-
   // UPDATE
   rain_circle
       .attr("r", calc_radius);

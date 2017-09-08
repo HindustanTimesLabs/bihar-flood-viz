@@ -44,7 +44,7 @@ function drawPlaces(data, cl){
       .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
       .attr("dy", -6)
       .attr("x", 0)
-      .style("text-anchor", "middle")
+      // .style("text-anchor", "middle")
       .text(function(d) { return d.properties.NAME; });
 }
 
@@ -53,9 +53,9 @@ function drawSubUnits(data, cl){
       .data(topojson.feature(data, data.objects.polygons).features)
     .enter().append("path")
       .attr("class", "subunit " + cl)
-      .style("fill", cl == "state" ? "#fafafa" : "#fff")
-      .style("stroke-width", "1px")
-      .style("stroke", cl == "state" ? "#000" : "#444")
+      // .style("fill", cl == "state" ? "#fafafa" : "#fff")
+      // .style("stroke-width", "1px")
+      // .style("stroke", cl == "state" ? "#000" : "#444")
       .attr("d", path);
 
 }
@@ -145,9 +145,9 @@ function drawLegend(buckets, colorScheme, legendSVG, legendScale, legend_width, 
       .attr("x", function(d){ return d.x; })
       .attr("fill", function(d){ return d.color })
       .attr("width", legend_width / buckets.length)
-      .style("stroke-width", "1px")
-      .style("stroke", "#fff")
-      .style("shape-rendering", "crispEdges");
+      // .style("stroke-width", "1px")
+      // .style("stroke", "#fff")
+      // .style("shape-rendering", "crispEdges");
   
   var legendNumber = legendSVG.selectAll(".legend-cumulative-number")
       .data(buckets, function(d){ return d.bucket; })
@@ -155,7 +155,7 @@ function drawLegend(buckets, colorScheme, legendSVG, legendScale, legend_width, 
       .attr("class", "legend-cumulative-number legend-number")
       .attr("y", legend_height)
       .attr("x", function(d){ return d.x; })
-      .style("text-anchor", "middle")
+      // .style("text-anchor", "middle")
       .text(function(d, i, data){ return d.text + (i == data.length - 1 ? "+ " + unit : ""); });
 
 }
