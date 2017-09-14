@@ -25,7 +25,6 @@ function drawOuterBoundary(data, boundary){
       .attr("class", "subunit-boundary")
       .style("fill", "none")
       .style("stroke", "#000");
-
 }
 
 function drawPlaces(data, cl){
@@ -44,7 +43,6 @@ function drawPlaces(data, cl){
       .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
       .attr("dy", -6)
       .attr("x", 0)
-      // .style("text-anchor", "middle")
       .text(function(d) { return d.properties.NAME; });
 }
 
@@ -53,9 +51,6 @@ function drawSubUnits(data, cl){
       .data(topojson.feature(data, data.objects.polygons).features)
     .enter().append("path")
       .attr("class", "subunit " + cl)
-      // .style("fill", cl == "state" ? "#fafafa" : "#fff")
-      // .style("stroke-width", "1px")
-      // .style("stroke", cl == "state" ? "#000" : "#444")
       .attr("d", path);
 
 }

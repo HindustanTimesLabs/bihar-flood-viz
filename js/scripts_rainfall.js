@@ -1,7 +1,25 @@
 var day_val = 1,
   delay = 250;
 
-var width = window.innerWidth, height = 600;
+// responsiveness
+var ww = $(window).width(),
+  resp = {};
+if (ww <= 768){
+  // mobile
+  resp.height = 250;
+  resp.circleMax = 10;
+  resp.ldh = 25;
+  resp.ldw = 75;
+  resp.ldny =  function(d){ return circle_scale(d * 2) + 5; }
+} else {
+  resp.height = 600;
+  resp.circleMax = 20;
+  resp.ldh = 45;
+  resp.ldw = 94;
+  resp.ldny =  function(d){ return circle_scale(d * 2) + 2; }
+}
+
+var width = $(".map-wrapper.blocks-rainfall .map").width(), height = resp.height;
 
 var projection = d3.geoMercator();
 
@@ -16,7 +34,7 @@ var svg = d3.select(".map-wrapper.blocks-rainfall .map").append("svg")
 var legend_height = 22,
   legend_bar_height = 10,
   legend_margin = {left: 5, right: 5};
-  legend_width = (width * .23) - legend_margin.left - legend_margin.right;  
+  legend_width = d3.min([320 - legend_margin.left - legend_margin.right, window.innerWidth - 20]);
 
 var legend_x = d3.scaleLinear()
   .range([0, legend_width]);
@@ -27,15 +45,15 @@ var legend = d3.select(".map-wrapper.blocks-rainfall .legend-cumulative").append
   .append("g")
     .attr("transform", "translate(" + legend_margin.left + ", 0)");
 
-var legend_daily_width = 94,
-  legend_daily_height = 45;
+var legend_daily_width = resp.ldw,
+  legend_daily_height = resp.ldh;
 
 var legend_daily = d3.select(".map-wrapper.blocks-rainfall .legend-daily").append("svg")
     .attr("width", legend_daily_width)
     .attr("height", legend_daily_height);
 
 var circle_scale = d3.scaleLinear()
-  .range([0, 20]);
+  .range([0, resp.circleMax]);
 
 var color_scheme = "YlGnBu";
 
@@ -97,6 +115,10 @@ function ready(error, bihar_block, state, city, rainfall, state_labels){
     drawRain(bihar_block, filterData(rainfall, day_val));
   }
 
+  function resize(){
+
+  }
+
 }
 
 function drawLegendDaily(data){
@@ -127,7 +149,7 @@ function drawLegendDaily(data){
     .enter().append("text")
       .attr("class", "legend-daily-number legend-number")
       .attr("x", circle_scale(m) * 2 + 10)
-      .attr("y", function(d){ return circle_scale(d * 2) + 2; })
+      .attr("y", resp.ldny)
       .text(function(d, i){ return d + (i == 1 ? " mm" : ""); });
 
 }
@@ -163,3 +185,4 @@ function drawRain(map, data){
   }
 
 }
+

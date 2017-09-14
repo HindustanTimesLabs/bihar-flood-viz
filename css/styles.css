@@ -53,6 +53,10 @@ body {
 }
 .map-wrapper .legend-number {
   font-size: .7em;
+
+}
+.map-wrapper .legend-number.legend-cumulative-number {
+  text-anchor: middle;
 }
 
 .map-wrapper .map .rain-circle {
@@ -94,6 +98,7 @@ body {
 .map-source {
   font-size: .8em;
   color: #888;
+  padding-left: 10px;
 }
 
 .red-text {
@@ -104,4 +109,13 @@ body {
 }
 .red-fill {
   fill: #df5a49 !important;
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width: 768px) {
+  .map-wrapper .legend-wrapper {
+    position: relative;
+    margin: 0 auto;
+    display: table;
+  }
 }
