@@ -115,7 +115,7 @@ function drawBar(){
 				side: "left"
 			},{
 				year: "2007",
-				text: "Floods submerged more than 40 percent of the state, and in each of five districts of north central Bihar more than 100 people died in the floods.",
+				text: "Water submerged more than 40 percent of the state, and in each of five districts of north central Bihar more than 100 people died in the floods.",
 				side: "right"
 			},{
 				year: "2017",
@@ -124,7 +124,7 @@ function drawBar(){
 			}];
 			annotations.forEach(function(annotation){ 
 				annotation.deaths = data.filter(function(d){ return d.year == annotation.year })[0].deaths;
-				console.log(annotation);
+				
 				return annotation; 
 			});
 

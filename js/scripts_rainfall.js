@@ -63,18 +63,21 @@ d3.queue()
   .defer(d3.json, "data/bihar_cities.json")
   .defer(d3.csv, "data/rainfall.csv")
   .defer(d3.json, "data/states_labels.json")
+  // .defer(d3.json, "data/bihar_district.json")
   .await(ready);
 
-function ready(error, bihar_block, state, city, rainfall, state_labels){
+function ready(error, bihar_block, state, city, rainfall, state_labels, district){
 
-  var boundary = centerZoom(bihar_block);
-  drawSubUnits(bihar_block, "block");
-  drawOuterBoundary(bihar_block, boundary);
+  var boundary = centerZoom(bihar_block, svg);
+  drawSubUnits(bihar_block, "block", svg);
+  // drawSubUnits(district, "district");
+  drawOuterBoundary(bihar_block, boundary, svg);
 
-  drawSubUnits(state, "state");
+  drawSubUnits(state, "state", svg);
 
-  drawPlaces(city, "city");
-  drawPlaces(state_labels, "state-label");
+  // drawPlaces(city, "city bg")
+  drawPlaces(city, "city", svg);
+  drawPlaces(state_labels, "state-label", svg);
 
   // update rain circle scale domain. max is daily rainfall, variable "rainfall"
   circle_scale.domain([0, d3.max(rainfall, function(d){ return +d.rainfall })]);
@@ -84,7 +87,7 @@ function ready(error, bihar_block, state, city, rainfall, state_labels){
   var buckets = [0, 150, 300, 450, 600, 750, d3.max(rainfall, function(d){ return +d.cumulative_rainfall; })]
   drawLegend(buckets, color_scheme, legend, legend_x, legend_width, legend_margin);
   
-  colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
+  colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd", svg);
 
   interval();
 
@@ -111,7 +114,7 @@ function ready(error, bihar_block, state, city, rainfall, state_labels){
 
   function redraw(){
     $(".blocks-rainfall .legend-wrapper .legend-date .day").html(day_val)
-    colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd");
+    colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd",svg);
     drawRain(bihar_block, filterData(rainfall, day_val));
   }
 
@@ -127,7 +130,7 @@ function drawLegendDaily(data){
 
   var legend_data = [m, 100];
 
-  var legend_circle = legend_daily.selectAll(".legend-circle")
+  var legend_circle = legend_daily.selectAll(".blocks-rainfall .legend-circle")
       .data(legend_data)
     .enter().append("circle")
       .attr("class", "legend-circle")
@@ -135,7 +138,7 @@ function drawLegendDaily(data){
       .attr("cx", circle_scale(m) + 1)
       .attr("r", function(d){ return circle_scale(d); });
 
-  var legend_dotted_line = legend_daily.selectAll(".legend-dotted-line")
+  var legend_dotted_line = legend_daily.selectAll(".blocks-rainfall .legend-dotted-line")
       .data(legend_data)
     .enter().append("line")
       .attr("class", "legend-dotted-line")
@@ -144,7 +147,7 @@ function drawLegendDaily(data){
       .attr("y1", function(d){ return circle_scale(d * 2) + 1; })
       .attr("y2", function(d){ return circle_scale(d * 2) + 1; });
 
-  var legend_daily_number = legend_daily.selectAll(".legend-daily-number")
+  var legend_daily_number = legend_daily.selectAll(".blocks-rainfall .legend-daily-number")
       .data(legend_data)
     .enter().append("text")
       .attr("class", "legend-daily-number legend-number")

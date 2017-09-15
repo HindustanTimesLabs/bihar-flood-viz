@@ -15,7 +15,7 @@ body {
   margin-left: 50%;
 }
 .map-wrapper.district-deaths .legend-wrapper {
-  margin-top: 30px;
+  /*margin-top: 30px;*/
 }
 .map-wrapper .legend-wrapper .legend-title, .map-wrapper .legend-wrapper .legend-date {
   text-align: center;
@@ -29,15 +29,23 @@ body {
   font-weight: bold;
   margin-bottom: 10px;
 }
-.map-wrapper .legend-daily svg {
+.map-wrapper.district-deaths .legend-wrapper .legend-date {
+  margin-bottom: 0px;
+}
+.map-wrapper.district-deaths .legend-wrapper .legend-sentence {
+  font-size: .8em;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.map-wrapper .legend-daily svg, .map-wrapper .legend-death-circles svg {
   margin: 0 auto;
   display: table;
 }
-.map-wrapper .legend-daily .legend-circle {
+.map-wrapper .legend-circle {
   fill: none;
   stroke: #000;
 }
-.map-wrapper .legend-daily .legend-dotted-line {
+.map-wrapper .legend-dotted-line {
   stroke: #000;
   stroke-dasharray: 2, 2;
   shape-rendering: crispEdges;
@@ -67,10 +75,35 @@ body {
   fill: #ddd;
   stroke-width: 0px;
 }
-.map-wrapper .map .subunit.district {
-  fill: #fff;
+.map-wrapper.blocks-rainfall .map .subunit.district {
+  fill: none;
   stroke-width: 1px;
+  stroke: #eee;
+}
+.map-wrapper.district-deaths .map .subunit.district {
+  fill: #fff;
+  stroke-width: .1px;
   stroke: #444;
+}
+/*.map-wrapper.district-deaths {
+  text-align: center;
+}*/
+/*.map-wrapper.district-deaths .map {
+  width: 30%;
+  display: inline-block;
+}*/
+/*.map-wrapper.district-deaths .map:first-of-type {
+  margin-right: 40px;
+}*/
+
+.map-wrapper.district-deaths .map .death-circle {
+  opacity: .7;
+  fill: #000;
+}
+.map-wrapper.district-deaths .map .death-circle-stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
 }
 .map-wrapper .map .subunit.state {
   fill: #fafafa;
@@ -110,6 +143,7 @@ body {
 .red-fill {
   fill: #e74c3c !important;
 }
+
 
 /*BAR CHART*/
 #deaths-bar-chart, .chart-source {

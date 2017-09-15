@@ -1,6 +1,6 @@
 // This function "centers" and "zooms" a map by setting its projection's scale and translate according to its outer boundary
 // It also returns the boundary itself in case you want to draw it to the map
-function centerZoom(data){
+function centerZoom(data, svg){
   var o = topojson.mesh(data, data.objects.polygons, function(a, b) { return a === b; });
 
   projection
@@ -18,7 +18,7 @@ function centerZoom(data){
   return o;
 }
 
-function drawOuterBoundary(data, boundary){
+function drawOuterBoundary(data, boundary, svg){
   svg.append("path")
       .datum(boundary)
       .attr("d", path)
@@ -27,7 +27,7 @@ function drawOuterBoundary(data, boundary){
       .style("stroke", "#000");
 }
 
-function drawPlaces(data, cl){
+function drawPlaces(data, cl, svg){
 
   if (cl == "state-label") path.pointRadius(0);
 
@@ -46,16 +46,17 @@ function drawPlaces(data, cl){
       .text(function(d) { return d.properties.NAME; });
 }
 
-function drawSubUnits(data, cl){
+function drawSubUnits(data, cl, svg){
   svg.selectAll(".subunit." + cl)
       .data(topojson.feature(data, data.objects.polygons).features)
     .enter().append("path")
       .attr("class", "subunit " + cl)
+      .style("stroke-width", .1)
       .attr("d", path);
 
 }
 
-function calculate_buckets(data, break_type, break_count, value){
+function calculate_buckets(data, break_type, break_count, value, svg){
   var nums = data.filter(function(d){ return d[value] != ""; }).map(function(d){ return +d[value]; });
   
   return chroma.limits(nums, break_type, break_count);
@@ -70,7 +71,7 @@ function toSlugCase(x) {
     .replace(/-+$/, '');            // Trim - from end of text
 }
 
-function colorSubUnits(cl, filtered_data, buckets, color_scale, value, match_value) {
+function colorSubUnits(cl, filtered_data, buckets, color_scale, value, match_value, svg) {
 
   var clrs = color_scale.warning != undefined ? color_scale.scale : colors[color_scale][buckets.length - 1];
 
