@@ -14,8 +14,14 @@ body {
   position: absolute;
   margin-left: 50%;
 }
+.map-wrapper.district-deaths {
+  margin-top: -10px;
+}
 .map-wrapper.district-deaths .legend-wrapper {
-  /*margin-top: 30px;*/
+  width: 300px;
+  position: relative;
+  margin: 0 auto;
+  width: auto;
 }
 .map-wrapper .legend-wrapper .legend-title, .map-wrapper .legend-wrapper .legend-date {
   text-align: center;
@@ -31,6 +37,7 @@ body {
 }
 .map-wrapper.district-deaths .legend-wrapper .legend-date {
   margin-bottom: 0px;
+  margin-top: 20px;
 }
 .map-wrapper.district-deaths .legend-wrapper .legend-sentence {
   font-size: .8em;
@@ -61,7 +68,6 @@ body {
 }
 .map-wrapper .legend-number {
   font-size: .7em;
-
 }
 .map-wrapper .legend-number.legend-cumulative-number {
   text-anchor: middle;
@@ -128,6 +134,31 @@ body {
   font-size: .7em;
 }
 
+/*SMALL MULTS*/
+.map-wrapper.district-deaths .small-mult-wrapper .map {
+  width: 25%;
+  display: inline-block;
+}
+.map-small-mult svg {
+  margin: 0 auto;
+  display: table;
+}
+.map-wrapper.district-deaths .small-mult-wrapper .legend-date {
+  position: absolute;
+  margin-left: 15%;
+  font-weight: bold;
+  margin-top: 29px;
+}
+.map-wrapper.district-deaths .small-mult-wrapper .legend-sentence-small {
+  position: absolute;
+  margin-left: 15%;
+  font-size: .7em;
+  text-align: center;
+  margin-top: 50px;
+}
+
+
+
 .map-source {
   font-size: .8em;
   color: #888;
@@ -192,6 +223,9 @@ body {
   font-size: .8em;
   color: #888;
 }
+.desktop-hide {
+  display: none;
+}
 
 
 /* Small Devices, Tablets */
@@ -202,6 +236,12 @@ body {
     display: table;
   }
   .x.axis .tick line {
+    display: none;
+  }
+  .desktop-hide {
+    display: block;
+  }
+  .mobile-hide {
     display: none;
   }
 }
