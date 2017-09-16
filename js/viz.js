@@ -305,14 +305,6 @@ function drawSubUnits(data, cl, svg, path){
 
 }
 
-function calculate_buckets(data, break_type, break_count, value, svg){
-  var nums = data.filter(function(d){ return d[value] != ""; }).map(function(d){ return +d[value]; });
-  
-  return chroma.limits(nums, break_type, break_count);
-};
-
-
-
 function colorSubUnits(cl, filtered_data, buckets, color_scale, value, match_value, svg) {
 
   var clrs = color_scale.warning != undefined ? color_scale.scale : colors[color_scale][buckets.length - 1];
@@ -339,10 +331,6 @@ function colorSubUnits(cl, filtered_data, buckets, color_scale, value, match_val
 
       return clrs[bucket_number];
 
-    })
-    .on("mouseover", function(d){ 
-      var match = filtered_data.filter(function(row){ return row[match_value] == d.properties[match_value] })[0];
-      console.log(match.district, match[value])
     });
 
 }
