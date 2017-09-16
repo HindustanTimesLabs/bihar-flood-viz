@@ -3,27 +3,27 @@ var start_year = 2006, end_year = 2017;
 var isMobile = false; //initiate as false
 
 var ww = $(window).width(),
-  resp = {};
+  resp_deaths = {};
 
 if (ww <= 768){
   // mobile
   isMobile = true;
-  resp.height = 250;
-  resp.range_max = 25;
-  resp.leg_height = 55;
-  resp.leg_width = 80;
-  resp.width = d3.min([window.innerWidth, 768]);
+  resp_deaths.height = 250;
+  resp_deaths.range_max = 25;
+  resp_deaths.leg_height = 55;
+  resp_deaths.leg_width = 80;
+  resp_deaths.width = d3.min([window.innerWidth, 768]);
 } else {
   // desktop
   isMobile = false;
-  resp.height = 250;
-  resp.width = (window.innerWidth / 4) * .8;
-  resp.range_max = 25;
-  resp.leg_height = 55;
-  resp.leg_width = 80;
+  resp_deaths.height = 250;
+  resp_deaths.width = (window.innerWidth / 4) * .8;
+  resp_deaths.range_max = 25;
+  resp_deaths.leg_height = 55;
+  resp_deaths.leg_width = 80;
 }
 
-var width = resp.width, height = resp.height;
+var death_width = resp_deaths.width, death_height = resp_deaths.height;
 
 var projection = d3.geoMercator();
 
@@ -32,18 +32,18 @@ var path = d3.geoPath()
     .pointRadius(2);
 
 var svg = d3.select(".map-wrapper.district-deaths .map").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", death_width)
+    .attr("height", death_height);
 
-var legend_deaths_width = resp.leg_width,
-  legend_deaths_height = resp.leg_height;
+var legend_deaths_width = resp_deaths.leg_width,
+  legend_deaths_height = resp_deaths.leg_height;
 
 var legend_deaths = d3.select(".map-wrapper.district-deaths .legend-death-circles").append("svg")
     .attr("width", legend_deaths_width)
     .attr("height", legend_deaths_height);
 
 var death_circle_scale = d3.scaleLinear()
-    .range([0, resp.range_max]);
+    .range([0, resp_deaths.range_max]);
 
 d3.queue()
   .defer(d3.json, "data/bihar_district.json")
@@ -55,13 +55,12 @@ d3.queue()
 
 function ready(error, district, state, city, state_label, deaths){
 
-  centerZoom(district, svg);
+  centerZoom(district, svg, projection);
   
   drawSubUnits(state, "state", svg);
 
-  centerZoom(district, svg);
   drawSubUnits(district, "district", svg);
-  var boundary = centerZoom(district, svg);
+  var boundary = centerZoom(district, svg, projection);
   drawOuterBoundary(district, boundary, svg);
   
   drawPlaces(state_label, "state-label", svg);
@@ -71,24 +70,24 @@ function ready(error, district, state, city, state_label, deaths){
 
   drawLegendDeaths(deaths);
 
-  function redraw(yr, svg){
+  function redraw_deaths(yr, svg){
     if (isMobile) $(".map-wrapper.district-deaths .legend-wrapper .legend-date").html(yr);
     drawDeathCircles(district, filterDeathData(deaths, yr), svg);
     fillSubUnits("district", filterDeathData(deaths, yr), svg);
   }
 
   // gif
-  // if (isMobile) {
-  redraw(start_year, svg)
-  d3.interval(function(){
-    if (start_year == end_year){
-      start_year = 2006
-    } else {
-      ++start_year
-    }
-    redraw(start_year, svg);
-  }, 1000);
-  // }
+  if (isMobile) {
+    redraw_deaths(start_year, svg)
+    d3.interval(function(){
+      if (start_year == end_year){
+        start_year = 2006
+      } else {
+        ++start_year
+      }
+      redraw_deaths(start_year, svg);
+    }, 2000);
+  }
 
   // small multiples
   var svg_obj = {};
@@ -124,7 +123,6 @@ function ready(error, district, state, city, state_label, deaths){
     // var boundary = centerZoom(district, svg_obj[i]);
     // drawOuterBoundary(district, boundary, svg_obj[i]);
     // redraw(i, svg_obj[i]);
-  // }
   }
 }
 

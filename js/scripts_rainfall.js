@@ -11,23 +11,25 @@ if (ww <= 768){
   resp.ldh = 25;
   resp.ldw = 75;
   resp.ldny =  function(d){ return circle_scale(d * 2) + 5; }
+  resp.fast_interval = 500;
 } else {
   resp.height = 600;
   resp.circleMax = 20;
   resp.ldh = 45;
   resp.ldw = 94;
   resp.ldny =  function(d){ return circle_scale(d * 2) + 2; }
+  resp.fast_interval = 250;
 }
 
 var width = $(".map-wrapper.blocks-rainfall .map").width(), height = resp.height;
 
-var projection = d3.geoMercator();
+var rain_projection = d3.geoMercator();
 
 var path = d3.geoPath()
-    .projection(projection)
+    .projection(rain_projection)
     .pointRadius(2);
 
-var svg = d3.select(".map-wrapper.blocks-rainfall .map").append("svg")
+var rain_svg = d3.select(".map-wrapper.blocks-rainfall .map").append("svg")
     .attr("width", width)
     .attr("height", height);
 
@@ -63,21 +65,18 @@ d3.queue()
   .defer(d3.json, "data/bihar_cities.json")
   .defer(d3.csv, "data/rainfall.csv")
   .defer(d3.json, "data/states_labels.json")
-  // .defer(d3.json, "data/bihar_district.json")
   .await(ready);
 
 function ready(error, bihar_block, state, city, rainfall, state_labels, district){
 
-  var boundary = centerZoom(bihar_block, svg);
-  drawSubUnits(bihar_block, "block", svg);
-  // drawSubUnits(district, "district");
-  drawOuterBoundary(bihar_block, boundary, svg);
+  var boundary = centerZoom(bihar_block, rain_svg, rain_projection);
+  drawSubUnits(bihar_block, "block", rain_svg);
+  drawOuterBoundary(bihar_block, boundary, rain_svg);
 
-  drawSubUnits(state, "state", svg);
+  drawSubUnits(state, "state", rain_svg);
 
-  // drawPlaces(city, "city bg")
-  drawPlaces(city, "city", svg);
-  drawPlaces(state_labels, "state-label", svg);
+  drawPlaces(city, "city", rain_svg);
+  drawPlaces(state_labels, "state-label", rain_svg);
 
   // update rain circle scale domain. max is daily rainfall, variable "rainfall"
   circle_scale.domain([0, d3.max(rainfall, function(d){ return +d.rainfall })]);
@@ -101,10 +100,10 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
 
     if (day_val > 11 && day_val < 15){
       delay = 1000;
-      $(".legend-date").addClass("red-text");
+      $(".map-wrapper.blocks-rainfall .legend-date").addClass("red-text");
     } else {
-      delay = 100;
-      $(".legend-date").removeClass("red-text");
+      delay = resp.fast_interval;
+      $(".map-wrapper.blocks-rainfall .legend-date").removeClass("red-text");
     }
 
     redraw();
@@ -114,7 +113,7 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
 
   function redraw(){
     $(".blocks-rainfall .legend-wrapper .legend-date .day").html(day_val)
-    colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd",svg);
+    colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd", rain_svg);
     drawRain(bihar_block, filterData(rainfall, day_val));
   }
 
@@ -165,7 +164,7 @@ function filterData(data, day){
 function drawRain(map, data){
 
   // JOIN
-  var rain_circle = svg.selectAll(".rain-circle")
+  var rain_circle = rain_svg.selectAll(".rain-circle")
       .data(topojson.feature(map, map.objects.polygons).features, function(d){ return d.properties.bl_cen_cd; });
 
   // UPDATE

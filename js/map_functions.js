@@ -1,6 +1,6 @@
 // This function "centers" and "zooms" a map by setting its projection's scale and translate according to its outer boundary
 // It also returns the boundary itself in case you want to draw it to the map
-function centerZoom(data, svg){
+function centerZoom(data, svg, projection, path){
   var o = topojson.mesh(data, data.objects.polygons, function(a, b) { return a === b; });
 
   projection
@@ -18,7 +18,7 @@ function centerZoom(data, svg){
   return o;
 }
 
-function drawOuterBoundary(data, boundary, svg){
+function drawOuterBoundary(data, boundary, svg, path){
   svg.append("path")
       .datum(boundary)
       .attr("d", path)
@@ -27,7 +27,7 @@ function drawOuterBoundary(data, boundary, svg){
       .style("stroke", "#000");
 }
 
-function drawPlaces(data, cl, svg){
+function drawPlaces(data, cl, svg, path, projection){
 
   if (cl == "state-label") path.pointRadius(0);
 
@@ -46,7 +46,7 @@ function drawPlaces(data, cl, svg){
       .text(function(d) { return d.properties.NAME; });
 }
 
-function drawSubUnits(data, cl, svg){
+function drawSubUnits(data, cl, svg, path){
   svg.selectAll(".subunit." + cl)
       .data(topojson.feature(data, data.objects.polygons).features)
     .enter().append("path")
@@ -62,14 +62,7 @@ function calculate_buckets(data, break_type, break_count, value, svg){
   return chroma.limits(nums, break_type, break_count);
 };
 
-function toSlugCase(x) {
-  return x.toString().toLowerCase()
-    .replace(/\s+/g, '-')           // Replace spaces with -
-    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-    .replace(/^-+/, '')             // Trim - from start of text
-    .replace(/-+$/, '');            // Trim - from end of text
-}
+
 
 function colorSubUnits(cl, filtered_data, buckets, color_scale, value, match_value, svg) {
 
