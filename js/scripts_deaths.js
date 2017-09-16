@@ -12,7 +12,7 @@ if (ww <= 768){
   resp.range_max = 25;
   resp.leg_height = 55;
   resp.leg_width = 80;
-  resp.width = window.innerWidth;
+  resp.width = d3.min([window.innerWidth, 768]);
 } else {
   // desktop
   isMobile = false;
@@ -72,13 +72,13 @@ function ready(error, district, state, city, state_label, deaths){
   drawLegendDeaths(deaths);
 
   function redraw(yr, svg){
-    if (isMobile) $(".map-wrapper.district-deaths .legend-date").html(yr);
+    if (isMobile) $(".map-wrapper.district-deaths .legend-wrapper .legend-date").html(yr);
     drawDeathCircles(district, filterDeathData(deaths, yr), svg);
     fillSubUnits("district", filterDeathData(deaths, yr), svg);
   }
 
   // gif
-  if (isMobile) {
+  // if (isMobile) {
     redraw(start_year, svg)
     d3.interval(function(){
       if (start_year == end_year){
@@ -88,7 +88,8 @@ function ready(error, district, state, city, state_label, deaths){
       }
       redraw(start_year, svg);
     }, 1000);
-  } else {
+  // }
+
     // small multiples
     var svg_obj = {};
     for (var i = start_year; i <= end_year; i++){
@@ -99,19 +100,30 @@ function ready(error, district, state, city, state_label, deaths){
       var year_data = filterDeathData(deaths, i),
         districts = year_data.filter(function(d){ return d.deaths != "0"; }).length,
         total_deaths = d3.sum(year_data, function(d){ return +d.deaths; });
-      $(".small-mult-wrapper .map-" + i).append("<div class='legend-sentence-small'>" + jz.str.numberLakhs(total_deaths) + " killed in <span class='red-text'>" + districts + "</span> districts.</div>")
+      $(".small-mult-wrapper .map-" + i).append("<div class='legend-sentence-small'><b>" + jz.str.numberLakhs(total_deaths) + "</b> killed in <b><span class='red-text'>" + districts + "</span></b> districts.</div>")
 
-      svg_obj[i] = d3.select(".map-wrapper.district-deaths .small-mult-wrapper .map-small-mult.map-" + i).append("svg")
-        .attr("width", width)
-        .attr("height", height);
+      // set height
+      function setHeight(){
+        var h = $(".small-mult-wrapper img").height();
+  
+        $(".small-mult-wrapper .map").height(h / 3);
+      }
+      setHeight();
 
-      centerZoom(district, svg_obj[i]);
-      centerZoom(district, svg_obj[i]);
-      drawSubUnits(district, "district", svg_obj[i]);
-      var boundary = centerZoom(district, svg_obj[i]);
-      drawOuterBoundary(district, boundary, svg_obj[i]);
-      redraw(i, svg_obj[i]);
-    }
+      $(window).resize(setHeight);
+
+
+      // svg_obj[i] = d3.select(".map-wrapper.district-deaths .small-mult-wrapper .map-small-mult.map-" + i).append("svg")
+      //   .attr("width", width)
+      //   .attr("height", height);
+
+      // centerZoom(district, svg_obj[i]);
+      // centerZoom(district, svg_obj[i]);
+      // drawSubUnits(district, "district", svg_obj[i]);
+      // var boundary = centerZoom(district, svg_obj[i]);
+      // drawOuterBoundary(district, boundary, svg_obj[i]);
+      // redraw(i, svg_obj[i]);
+    // }
   }
 }
 

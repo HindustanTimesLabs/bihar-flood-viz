@@ -109,7 +109,7 @@ body {
 .map-wrapper.district-deaths .map .death-circle-stroke {
   fill: none;
   stroke: #000;
-  stroke-width: 2px;
+  /*stroke-width: 2px;*/
 }
 .map-wrapper .map .subunit.state {
   fill: #fafafa;
@@ -135,6 +135,11 @@ body {
 }
 
 /*SMALL MULTS*/
+.small-mult-wrapper img {
+  width: 100%;
+  position: absolute;
+}
+
 .map-wrapper.district-deaths .small-mult-wrapper .map {
   width: 25%;
   display: inline-block;
@@ -225,6 +230,25 @@ body {
 }
 .desktop-hide {
   display: none;
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (max-width: 1200px) {
+  .map-wrapper.district-deaths .small-mult-wrapper .legend-date {
+    margin-top: 0px;
+    margin-left: 12%;
+  }
+  .map-wrapper.district-deaths .small-mult-wrapper .legend-sentence-small {
+    margin-top: 20px;
+    margin-left: 12%;
+  }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (max-width: 992px) {
+  .map-wrapper.district-deaths .small-mult-wrapper .legend-sentence-small {
+    font-size: .6em;
+  }
 }
 
 
