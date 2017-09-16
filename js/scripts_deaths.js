@@ -79,51 +79,52 @@ function ready(error, district, state, city, state_label, deaths){
 
   // gif
   // if (isMobile) {
-    redraw(start_year, svg)
-    d3.interval(function(){
-      if (start_year == end_year){
-        start_year = 2006
-      } else {
-        ++start_year
-      }
-      redraw(start_year, svg);
-    }, 1000);
+  redraw(start_year, svg)
+  d3.interval(function(){
+    if (start_year == end_year){
+      start_year = 2006
+    } else {
+      ++start_year
+    }
+    redraw(start_year, svg);
+  }, 1000);
   // }
 
-    // small multiples
-    var svg_obj = {};
-    for (var i = start_year; i <= end_year; i++){
+  // small multiples
+  var svg_obj = {};
+  for (var i = start_year; i <= end_year; i++){
 
-      $(".small-mult-wrapper").append("<div class='map map-small-mult map-" + i + "'></div>");
-      $(".small-mult-wrapper .map-" + i).append("<div class='legend-date'>" + i + "</div>");
+    $(".small-mult-wrapper").append("<div class='map map-small-mult map-" + i + "'></div>");
+    $(".small-mult-wrapper .map-" + i).append("<div class='legend-date'>" + i + "</div>");
 
-      var year_data = filterDeathData(deaths, i),
-        districts = year_data.filter(function(d){ return d.deaths != "0"; }).length,
-        total_deaths = d3.sum(year_data, function(d){ return +d.deaths; });
-      $(".small-mult-wrapper .map-" + i).append("<div class='legend-sentence-small'><b>" + jz.str.numberLakhs(total_deaths) + "</b> killed in <b><span class='red-text'>" + districts + "</span></b> districts.</div>")
+    var year_data = filterDeathData(deaths, i),
+      districts = year_data.filter(function(d){ return d.deaths != "0"; }).length,
+      total_deaths = d3.sum(year_data, function(d){ return +d.deaths; });
+    $(".small-mult-wrapper .map-" + i).append("<div class='legend-sentence-small'><b>" + jz.str.numberLakhs(total_deaths) + "</b> killed in <b><span class='red-text'>" + districts + "</span></b> districts.</div>")
 
-      // set height
-      function setHeight(){
-        var h = $(".small-mult-wrapper img").height();
-  
-        $(".small-mult-wrapper .map").height(h / 3);
-      }
-      setHeight();
+    // set height
 
-      $(window).resize(setHeight);
+    function setHeight(){
+      var coefficient = ww >= 992 ? 3.04 : 3.09;
+      var h = $(".small-mult-wrapper img").height();
+      $(".small-mult-wrapper .map").height(h / coefficient);
+    }
 
+    setTimeout(setHeight, 100);
 
-      // svg_obj[i] = d3.select(".map-wrapper.district-deaths .small-mult-wrapper .map-small-mult.map-" + i).append("svg")
-      //   .attr("width", width)
-      //   .attr("height", height);
+    $(window).resize(setHeight);
 
-      // centerZoom(district, svg_obj[i]);
-      // centerZoom(district, svg_obj[i]);
-      // drawSubUnits(district, "district", svg_obj[i]);
-      // var boundary = centerZoom(district, svg_obj[i]);
-      // drawOuterBoundary(district, boundary, svg_obj[i]);
-      // redraw(i, svg_obj[i]);
-    // }
+    // svg_obj[i] = d3.select(".map-wrapper.district-deaths .small-mult-wrapper .map-small-mult.map-" + i).append("svg")
+    //   .attr("width", width)
+    //   .attr("height", height);
+
+    // centerZoom(district, svg_obj[i]);
+    // centerZoom(district, svg_obj[i]);
+    // drawSubUnits(district, "district", svg_obj[i]);
+    // var boundary = centerZoom(district, svg_obj[i]);
+    // drawOuterBoundary(district, boundary, svg_obj[i]);
+    // redraw(i, svg_obj[i]);
+  // }
   }
 }
 
