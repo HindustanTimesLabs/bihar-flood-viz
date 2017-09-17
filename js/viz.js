@@ -256,6 +256,7 @@ function drawTip(cl, data, svg, parent){
   $(".tip").append("<div class='tip-title'></div>");
   $(".tip").append("<div class='tip-cumulative'></div>");
   $(".tip").append("<div class='tip-chart'></div>");
+  $(".tip").hide();
 
   data.forEach(function(row){
     var date_split = row.date.split(" ");
@@ -398,7 +399,7 @@ function drawTip(cl, data, svg, parent){
     var y = coordinates[1];
     var tip_padding_y = Number($(".tip").css("padding-top").split("px")[0]) + Number($(".tip").css("padding-bottom").split("px")[0]);
     var map_offset = $("." + parent).offset().top;
-    var tip_top = y - $(".tip").height() + tip_padding_y;
+    var tip_top = y - $(".tip").height() + map_offset - tip_padding_y - 20;
 
     $(".tip").css({
       left: tip_left,
