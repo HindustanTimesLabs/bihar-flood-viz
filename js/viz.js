@@ -153,6 +153,8 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
   
   colorSubUnits("block", filterData(rainfall, day_val), buckets, color_scheme, "cumulative_rainfall", "bl_cen_cd", svg);
 
+  if (!isMobile) drawTip("block", rainfall, rain_svg, "blocks-rainfall");
+
   interval();
 
   function interval(){
@@ -247,6 +249,165 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
 
 }
 
+function drawTip(cl, data, svg, parent){
+  // initiatve tip div
+  
+  $("." + parent).append("<div class='tip'></div>");
+  $(".tip").append("<div class='tip-title'></div>");
+  $(".tip").append("<div class='tip-cumulative'></div>");
+  $(".tip").append("<div class='tip-chart'></div>");
+
+  data.forEach(function(row){
+    var date_split = row.date.split(" ");
+    var date_year = date_split[2];
+    var date_month = month_convert(date_split[1]);
+    var date_day = jz.str.numberPrependZeros(date_split[0], 2);
+
+    function month_convert(month){
+      var lookup = {
+        "January": "01",
+        "February": "02",
+        "March": "03",
+        "April": "04",
+        "May": "05",
+        "June": "06",
+        "July": "07",
+        "August": "08",
+        "September": "09",
+        "October": "10",
+        "November": "11",
+        "December": "12"
+      };
+
+      return lookup[month];
+    }
+    row.day = date_day;
+    row.date_format = new Date(date_year + "-" + date_month + "-" + date_day);
+    return row;
+  });
+
+  var tip_setup = d3.marcon()
+      .width($("." + parent + " .tip").width())
+      .height(100)
+      .left(0)
+      .right(10)
+      .top(10)
+      .bottom(15)
+      .element("." + parent + " .tip-chart");
+
+  tip_setup.render();
+
+  var tip_width = tip_setup.innerWidth(),
+    tip_height = tip_setup.innerHeight(),
+    tip_svg = tip_setup.svg();
+
+  var tip_x = d3.scaleTime()
+    .range([0, tip_width])
+    .domain([data[0].date_format, data[data.length - 1].date_format]);
+
+  var tip_y = d3.scaleLinear()
+    .range([tip_height, 0])
+    .domain([0, d3.max(data, function(d){ return +d.rainfall })]);
+
+  // axes
+  function customYAxis(g) {
+    var tip_y_axis = d3.axisRight(tip_y).tickSize(width).ticks(3).tickFormat(function(d, i, ticks){ return i == ticks.length - 1 ? d + " mm" : d; });
+    g.call(tip_y_axis);
+    g.select(".domain").remove();
+    g.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#777").attr("stroke-dasharray", "2,2");
+    g.selectAll(".tick text").attr("x", 4).attr("dy", -4);
+  }
+  
+  tip_svg.append("g")
+    .attr("class", "tip-axis y")
+    .call(customYAxis);
+
+  var formatTime = d3.timeFormat("%d")
+
+  var tip_x_axis = d3.axisBottom(tip_x).tickPadding(0).ticks(60).tickFormat(function(d, i){
+    console.log(i, formatTime(d));
+    if (i == 0) {
+      return "Aug. 1"
+    } else if (i == 28){
+      return "15"
+    } else if (i == 59){
+      return "31"
+    }
+  });
+
+  tip_svg.append("g")
+    .attr("class", "tip-axis x")
+    .attr("transform", "translate(0, " + tip_height + ")")
+    .call(tip_x_axis);
+
+  svg.selectAll(".subunit." + cl)
+      .on("mousemove", tipOn)
+      .on("mouseout", tipOff);
+
+  function tipOff(){
+    d3.selectAll(".subunit." + cl).style("stroke-width", "0px");
+    $(".tip").hide();
+  }
+
+  function tipOn(subunit){
+    $(".tip").show();
+
+    // populate the tip
+    var match = data.filter(function(row){ return row.bl_cen_cd == subunit.properties.bl_cen_cd});
+    var district = match[0].district;
+    var block = match[0].block;
+
+    d3.select(".subunit." + cl + ".bl-" + match[0].bl_cen_cd).style("stroke-width", "1.5px").style("stroke", "#000").moveToFront();
+    d3.selectAll(".rain-circle").moveToFront();
+    d3.selectAll(".map-wrapper .map .place-label.city").moveToFront();
+
+    $(".tip-title").html(block + " block, " + district + " district");
+    $(".tip-cumulative").html(jz.str.numberDecimals(d3.sum(match, function(d){ return +d.rainfall; }), 1) + " total mm of rainfall in August");
+
+    var tip_bar = tip_svg.selectAll(".tip-bar")
+        .data(match, function(d, i){ return d.date; });
+
+    tip_bar
+        .attr("y", function(d){ return tip_y(d.rainfall); })
+        .attr("height", function(d){ return tip_height - tip_y(d.rainfall); })
+
+    tip_bar.enter().append("rect")
+        .attr("class", "tip-bar")
+        .attr("x", function(d){ return tip_x(d.date_format); })
+        .attr("y", function(d){ return tip_y(d.rainfall); })
+        .attr("width", tip_width / match.length)
+        .attr("height", function(d){ return tip_height - tip_y(d.rainfall); })
+        .style("fill", function(d){ 
+          if (d.day == "12" || d.day == "13" || d.day == "14"){
+            return "#e74c3c"
+          } else {
+            return "#48a2d7"
+          }
+          
+        })
+
+    // position the tip
+    var coordinates = [0, 0];
+    coordinates = d3.mouse(this);
+    
+    // tip left
+    var x = coordinates[0];
+    var tip_padding_x = Number($(".tip").css("padding-left").split("px")[0]) + Number($(".tip").css("padding-right").split("px")[0]);
+    var tip_left = x - (tip_width / 2) - tip_padding_x;
+
+    var y = coordinates[1];
+    var tip_padding_y = Number($(".tip").css("padding-top").split("px")[0]) + Number($(".tip").css("padding-bottom").split("px")[0]);
+    var map_offset = $("." + parent).offset().top;
+    var tip_top = y - $(".tip").height() + tip_padding_y;
+
+    $(".tip").css({
+      left: tip_left,
+      top: tip_top
+    });
+
+  }
+}
+
 // This function "centers" and "zooms" a map by setting its projection's scale and translate according to its outer boundary
 // It also returns the boundary itself in case you want to draw it to the map
 function centerZoom(data, svg, projection, path){
@@ -299,11 +460,11 @@ function drawSubUnits(data, cl, svg, path){
   svg.selectAll(".subunit." + cl)
       .data(topojson.feature(data, data.objects.polygons).features)
     .enter().append("path")
-      .attr("class", "subunit " + cl)
+      .attr("class", function(d){ return "subunit " + cl + (cl == "block" ? " bl-" + d.properties.bl_cen_cd : "") })
       .style("stroke-width", .1)
       .attr("d", path);
-
 }
+
 
 function colorSubUnits(cl, filtered_data, buckets, color_scale, value, match_value, svg) {
 

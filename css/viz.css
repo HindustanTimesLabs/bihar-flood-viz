@@ -81,6 +81,9 @@ body {
   fill: #ddd;
   stroke-width: 0px;
 }
+.map-wrapper .map .subunit.block.selected {
+  stroke-width: 2px !important;
+}
 .map-wrapper.blocks-rainfall .map .subunit.district {
   fill: none;
   stroke-width: 1px;
@@ -230,6 +233,33 @@ body {
 }
 .desktop-hide {
   display: none;
+}
+
+/*TIP*/
+.tip {
+  border-radius: 3px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  width: 250px;
+  position: absolute;
+  padding: 5px 10px;
+  opacity: .9;
+}
+.tip-title {
+  font-size: .7em;
+  font-weight: bold;
+}
+.tip-cumulative {
+  font-size: .7em;
+}
+.tip-chart rect {
+  fill: steelblue;
+}
+.tip-axis.x .domain, .tip-axis.x .tick line {
+  display: none;
+}
+.tip-axis.x .domain, .tip-axis.x .tick text {
+  text-anchor: start;
 }
 
 /* Large Devices, Wide Screens */
