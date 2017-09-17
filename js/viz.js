@@ -155,7 +155,30 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
 
   if (!isMobile) drawTip("block", rainfall, rain_svg, "blocks-rainfall");
 
-  interval();
+  // only start running it if it's in the window view
+  function isScrolledIntoView(elem){
+    var docViewTop = $(window).scrollTop();
+    var docViewBottom = docViewTop + $(window).height();
+
+    var elemTop = $(elem).offset().top;
+    var elemBottom = elemTop + $(elem).height();
+
+    return ((elemBottom <= docViewBottom + 300) && (elemTop >= docViewTop - 300));
+  }
+
+  var hasScrollCheckRun = false;
+
+  scrollCheck();
+  $(window).scroll(function(){
+    if (!hasScrollCheckRun) scrollCheck();
+  });
+
+  function scrollCheck(){
+    if (isScrolledIntoView(".map-wrapper.blocks-rainfall")){ 
+      hasScrollCheckRun = true;
+      interval();
+    }
+  }
 
   function interval(){
     
@@ -245,7 +268,6 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
     $(window).resize(setHeight);
 
   }
-
 
 }
 
@@ -383,8 +405,7 @@ function drawTip(cl, data, svg, parent){
           } else {
             return "#48a2d7"
           }
-          
-        })
+        });
 
     // position the tip
     var coordinates = [0, 0];
