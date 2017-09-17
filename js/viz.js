@@ -326,10 +326,9 @@ function drawTip(cl, data, svg, parent){
   var formatTime = d3.timeFormat("%d")
 
   var tip_x_axis = d3.axisBottom(tip_x).tickPadding(0).ticks(60).tickFormat(function(d, i){
-    console.log(i, formatTime(d));
     if (i == 0) {
       return "Aug. 1"
-    } else if (i == 28){
+    } else if (i == 27){
       return "15"
     } else if (i == 59){
       return "31"
@@ -394,7 +393,7 @@ function drawTip(cl, data, svg, parent){
     // tip left
     var x = coordinates[0];
     var tip_padding_x = Number($(".tip").css("padding-left").split("px")[0]) + Number($(".tip").css("padding-right").split("px")[0]);
-    var tip_left = x - (tip_width / 2) - tip_padding_x;
+    var tip_left = x - (tip_width / 2) - (tip_padding_x / 2);
 
     var y = coordinates[1];
     var tip_padding_y = Number($(".tip").css("padding-top").split("px")[0]) + Number($(".tip").css("padding-bottom").split("px")[0]);
