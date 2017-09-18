@@ -136,9 +136,10 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
 
   var boundary = centerZoom(bihar_block, rain_svg, rain_projection, rain_path);
   drawSubUnits(bihar_block, "block", rain_svg, rain_path);
-  drawOuterBoundary(bihar_block, boundary, rain_svg, rain_path);
+  
 
   drawSubUnits(state, "state", rain_svg, rain_path);
+  drawOuterBoundary(bihar_block, boundary, rain_svg, rain_path);
 
   drawPlaces(city, "city", rain_svg, rain_path, rain_projection);
   drawPlaces(state_labels, "state-label", rain_svg, rain_path, rain_projection);
@@ -156,29 +157,33 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
   if (!isMobile) drawTip("block", rainfall, rain_svg, "blocks-rainfall");
 
   // only start running it if it's in the window view
+  
   function isScrolledIntoView(elem){
+    var winHeight = $(window).height();
     var docViewTop = $(window).scrollTop();
-    var docViewBottom = docViewTop + $(window).height();
+    var docViewBottom = docViewTop + winHeight;
 
     var elemTop = $(elem).offset().top;
     var elemBottom = elemTop + $(elem).height();
 
-    return ((elemBottom <= docViewBottom + 300) && (elemTop >= docViewTop - 300));
+    return ((elemBottom <= docViewBottom + winHeight) && (elemTop >= docViewTop - winHeight));
   }
 
   var hasScrollCheckRun = false;
 
   scrollCheck();
   $(window).scroll(function(){
-    if (!hasScrollCheckRun) scrollCheck();
+    scrollCheck();
   });
 
   function scrollCheck(){
     if (isScrolledIntoView(".map-wrapper.blocks-rainfall")){ 
+      if (!hasScrollCheckRun) interval();
       hasScrollCheckRun = true;
-      interval();
     }
   }
+
+  interval();
 
   function interval(){
     
@@ -198,7 +203,13 @@ function ready(error, bihar_block, state, city, rainfall, state_labels, district
 
     redraw();
 
-    d3.timeout(interval, delay);
+    if (isScrolledIntoView(".map-wrapper.blocks-rainfall")) {
+      d3.timeout(interval, delay);
+    } else {
+      hasScrollCheckRun = false;
+      return false; 
+    }
+    
   }
 
   function redraw(){
@@ -380,6 +391,7 @@ function drawTip(cl, data, svg, parent){
     var block = match[0].block;
 
     d3.select(".subunit." + cl + ".bl-" + match[0].bl_cen_cd).style("stroke-width", "1.5px").style("stroke", "#000").moveToFront();
+    d3.selectAll(".subunit-boundary").moveToFront();
     d3.selectAll(".rain-circle").moveToFront();
     d3.selectAll(".map-wrapper .map .place-label.city").moveToFront();
 
@@ -958,4 +970,3 @@ d3.wordwrap = function(line, maxCharactersPerLine) {
   }
   return lines;
 };
-
